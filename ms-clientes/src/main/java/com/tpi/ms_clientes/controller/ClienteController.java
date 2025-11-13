@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
+import java.util.Map;
+
 
 import java.net.URI;
 import java.util.List;
@@ -18,7 +20,13 @@ public class ClienteController {
     private final ClienteService service;
 
     @GetMapping
-    public List<Cliente> listar() { return service.listar(); }
+    public ResponseEntity<?> listar() { 
+        List<Cliente> clientes = service.listar();
+        if (clientes.isEmpty()) {
+            return ResponseEntity.ok(Map.of("message", "No se encontraron clientes"));
+        }
+        return ResponseEntity.ok(clientes);
+    }
 
     @GetMapping("/{id}")
     public Cliente detalle(@PathVariable Integer id) { return service.buscar(id); }

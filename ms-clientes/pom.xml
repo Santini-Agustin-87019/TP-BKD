@@ -68,6 +68,7 @@
     		<version>2.5.0</version>
 		</dependency>
 
+<!-- Driver PostgreSQL -->
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
