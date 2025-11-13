@@ -1,6 +1,7 @@
 import lombok.*;
 import jakarta.persistence.*;
-
+import jakarta.validation.constraints.*;
+import java.util.Date;
 
 @Entity
 @Data
@@ -31,6 +32,13 @@ public class Cliente {
 
     private Boolean activo;
     
+    @Column(name = "fecha_creacion", updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaCreacion;
+
+    @Column(name = "fecha_modificacion")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaModificacion;
      @PrePersist
     public void prePersist() {
         this.fechaCreacion = new Date();
