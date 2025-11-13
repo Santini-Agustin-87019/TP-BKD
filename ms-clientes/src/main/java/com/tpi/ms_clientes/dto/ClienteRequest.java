@@ -1,3 +1,5 @@
+package com.tpi.ms_clientes.dto;
+
 import jakarta.validation.constraints.*;
 import lombok.*;
 
