@@ -5,9 +5,12 @@ import com.tpi.backend.mscamiones.model.Camion;
 import com.tpi.backend.mscamiones.model.Transportista;
 import com.tpi.backend.mscamiones.repository.CamionRepository;
 import com.tpi.backend.mscamiones.repository.TransportistaRepository;
-import jakarta.persistence.EntityNotFoundException; // Importante
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Objects;
 
 @Service // Le dice a Spring que esta es una clase de Servicio
 public class CamionServiceImpl implements CamionService {
@@ -46,5 +49,27 @@ public class CamionServiceImpl implements CamionService {
         
         // 7. Guardar la nueva entidad en la base de datos
         return camionRepository.save(nuevoCamion);
+    }
+
+    @Override
+    public List<Camion> listar(String estado) {
+        
+        // 1. Si el 'estado' no se proporciona (es nulo), devolvemos TODOS.
+        if (Objects.isNull(estado)) {
+            return camionRepository.findAll();
+        }
+
+        // 2. Si se proporciona, traducimos el texto.
+        if (estado.equalsIgnoreCase("libre")) {
+            // 3. Usamos el nuevo método del repositorio.
+            return camionRepository.findAllByDisponibilidad(true);
+        } else if (estado.equalsIgnoreCase("ocupado")) {
+            // 4. Usamos el nuevo método del repositorio.
+            return camionRepository.findAllByDisponibilidad(false);
+        }
+
+        // 5. Si el estado es cualquier otra cosa (ej. "roto"), 
+        // devolvemos una lista vacía.
+        return List.of(); 
     }
 }

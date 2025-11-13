@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 // Usamos /api/v1/ para versionar la API.
 @RequestMapping("/api/v1/camiones") 
@@ -24,5 +26,18 @@ public class CamionController {
         
         // 4. Respondemos con "200 OK" y el camión creado
         return ResponseEntity.ok(nuevoCamion);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Camion>> listarCamiones(
+            // @RequestParam mapea el parámetro de la URL (ej. ...?estado=libre)
+            // 'required = false' significa que el parámetro es opcional.
+            @RequestParam(name = "estado", required = false) String estado
+    ) {
+        // 1. Llamamos al servicio, que tiene toda la lógica.
+        List<Camion> camiones = camionService.listar(estado);
+        
+        // 2. Respondemos "200 OK" con la lista de camiones.
+        return ResponseEntity.ok(camiones);
     }
 }
