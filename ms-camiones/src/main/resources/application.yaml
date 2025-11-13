@@ -1,0 +1,44 @@
+# 1. Configuración del Puerto del Servidor
+server:
+  port: 8081
+
+# 2. Nombre de la Aplicación
+spring:
+  application:
+    name: ms-camiones
+
+  # 3. Configuración de la Base de Datos (DataSource)
+  datasource:
+    # URL de conexión de PostgreSQL
+    # Voy a asumir que el nombre de tu BD será 'ms_camiones_db'
+    # Se agrega serverTimezone=UTC para evitar el error de timezone
+    url: jdbc:postgresql://localhost:5432/ms_camiones_db?serverTimezone=UTC
+
+    # Usuario de tu servidor PostgreSQL (generalmente 'postgres')
+    username: postgres
+
+    # ¡¡IMPORTANTE!! Reemplaza esto con tu contraseña real
+    password: admin
+
+    # El driver específico de PostgreSQL
+    driver-class-name: org.postgresql.Driver
+
+  # 4. Configuración de JPA (Hibernate)
+  jpa:
+    # Le decimos a Hibernate que "traduzca" su SQL
+    # al dialecto específico de PostgreSQL.
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+    # Mantenemos 'create-drop' por ahora.
+    # Esto creará las tablas en tu BD PostgreSQL al iniciar
+    # y las borrará al detenerse. Perfecto para desarrollo.
+    hibernate:
+      ddl-auto: create-drop
+
+    # Seguimos queriendo ver el SQL que se ejecuta
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true # Formatea el SQL en la consola
+        jdbc:
+          time_zone: UTC # Fuerza a Hibernate a usar UTC
