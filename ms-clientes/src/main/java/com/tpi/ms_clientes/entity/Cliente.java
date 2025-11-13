@@ -1,3 +1,5 @@
+package com.tpi.ms_clientes.entity;
+
 import lombok.*;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -12,7 +14,7 @@ import java.util.Date;
 public class Cliente {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @NotBlank
     private String nombre;
