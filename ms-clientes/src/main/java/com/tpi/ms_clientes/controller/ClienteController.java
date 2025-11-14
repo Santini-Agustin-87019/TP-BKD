@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import java.util.Map;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.net.URI;
 import java.util.List;
@@ -20,6 +21,7 @@ public class ClienteController {
     private final ClienteService service;
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('admin')")
     public ResponseEntity<?> listar() { 
         List<Cliente> clientes = service.listar();
         if (clientes.isEmpty()) {
@@ -29,20 +31,25 @@ public class ClienteController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('admin')")
     public Cliente detalle(@PathVariable Integer id) { return service.buscar(id); }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('admin', 'cliente')")
     public ResponseEntity<ClienteResponse> crear(@Valid @RequestBody ClienteRequest in) {
         ClienteResponse c = service.crear(in);
         return ResponseEntity.created(URI.create("/api/v1/clientes/" + c.getId())).body(c);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('admin')")
     public ResponseEntity<ClienteResponse> actualizar(@PathVariable Integer id, @Valid @RequestBody ClienteRequest in) {
         return ResponseEntity.ok(service.actualizar(id, in));
     }
 
+
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('admin')")
     public ResponseEntity<Void> eliminar(@PathVariable Integer id) {
         service.eliminar(id);
         return ResponseEntity.noContent().build();
