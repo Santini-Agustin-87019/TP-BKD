@@ -1,11 +1,11 @@
-package com.tpi.msrecursos.repository;
-
+package com.tpi.ms_recursos.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
-import com.tpi.msrecursos.entity.ConfiguracionCostos;
+import java.util.Optional; // ¡Agregamos esto para el service!
+// ¡AQUÍ ESTABA EL ERROR DE COMPILACIÓN!
+import com.tpi.ms_recursos.entity.ConfiguracionCostos;
 
 @Repository
 public interface ConfiguracionCostosRepository extends JpaRepository<ConfiguracionCostos, Long> {
-    // Spring ya nos da: save(), findById(), findAll(), etc.
+    Optional<ConfiguracionCostos> findTopByOrderByVigenciaDesdeDesc(); // ¡Agregamos esto!
 }

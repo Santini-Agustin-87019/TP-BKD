@@ -1,4 +1,4 @@
-package com.tpi.msrecursos.entity;
+package com.tpi.ms_recursos.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

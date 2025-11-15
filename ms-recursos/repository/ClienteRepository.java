@@ -1,11 +1,11 @@
-package com.tpi.msrecursos.repository;
-
+package com.tpi.ms_recursos.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
-import com.tpi.msrecursos.entity.Cliente;
+import java.util.Optional; // ¡Agregamos esto para el service!
+// ¡AQUÍ ESTABA EL ERROR DE COMPILACIÓN!
+import com.tpi.ms_recursos.entity.Cliente;
 
 @Repository
 public interface ClienteRepository extends JpaRepository<Cliente, Long> {
-    // Spring ya nos da: save(), findById(), findAll(), etc.
+    Optional<Cliente> findByDocumento(String documento); // ¡Agregamos esto!
 }
