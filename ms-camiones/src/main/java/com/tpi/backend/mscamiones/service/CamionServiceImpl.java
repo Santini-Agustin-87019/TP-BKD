@@ -8,6 +8,8 @@ import com.tpi.backend.mscamiones.repository.TransportistaRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.tpi.backend.mscamiones.dto.ValidacionDto;
+import com.tpi.backend.mscamiones.dto.ValidacionResponseDto;
 
 import java.util.List;
 import java.util.Objects;
@@ -71,5 +73,64 @@ public class CamionServiceImpl implements CamionService {
         // 5. Si el estado es cualquier otra cosa (ej. "roto"), 
         // devolvemos una lista vacía.
         return List.of(); 
+    }
+
+    @Override
+    public Camion actualizarEstado(String dominio, String estado) {
+        
+        // 1. Buscamos el camión por su PK (dominio).
+        Camion camion = camionRepository.findById(dominio)
+            .orElseThrow(() -> new EntityNotFoundException(
+                "No se encontró el camión con dominio: " + dominio
+            ));
+
+        // 2. Lógica de negocio: Traducimos el String a Boolean.
+        Boolean nuevaDisponibilidad;
+        if (estado.equalsIgnoreCase("libre")) {
+            nuevaDisponibilidad = true;
+        } else if (estado.equalsIgnoreCase("ocupado")) {
+            nuevaDisponibilidad = false;
+        } else {
+            // 3. Si mandan cualquier otra cosa, lanzamos un error.
+            throw new IllegalArgumentException("Estado no válido: " + estado);
+        }
+
+        // 4. Actualizamos el campo en la entidad.
+        camion.setDisponibilidad(nuevaDisponibilidad);
+
+        // 5. Guardamos la entidad actualizada en la BD.
+        // JPA es lo bastante inteligente para saber que esto es un UPDATE, no un CREATE.
+        return camionRepository.save(camion);
+    }
+
+    @Override
+    public ValidacionResponseDto validarCapacidad(ValidacionDto dto) {
+        
+        // 1. Buscamos el camión
+        Camion camion = camionRepository.findById(dto.getDominio())
+            .orElse(null); // Usamos orElse(null) para manejar el error nosotros mismos
+
+        // 2. ¿Existe el camión?
+        if (camion == null) {
+            return new ValidacionResponseDto(false, "Camión no encontrado.");
+        }
+
+        // 3. ¿Está disponible? (Una validación extra que aporta valor)
+        if (!camion.getDisponibilidad()) {
+            return new ValidacionResponseDto(false, "El camión no está disponible (está 'ocupado').");
+        }
+
+        // 4. Validación de PESO
+        if (dto.getPeso() > camion.getCapacidadPeso()) {
+            return new ValidacionResponseDto(false, "El peso supera la capacidad máxima del camión (" + camion.getCapacidadPeso() + "kg).");
+        }
+
+        // 5. Validación de VOLUMEN
+        if (dto.getVolumen() > camion.getCapacidadVolumen()) {
+            return new ValidacionResponseDto(false, "El volumen supera la capacidad máxima del camión (" + camion.getCapacidadVolumen() + "m3).");
+        }
+
+        // 6. ¡Éxito! El camión es apto.
+        return new ValidacionResponseDto(true, null);
     }
 }
