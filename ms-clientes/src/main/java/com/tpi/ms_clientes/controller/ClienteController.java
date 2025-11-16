@@ -21,7 +21,7 @@ public class ClienteController {
     private final ClienteService service;
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('admin')")
+    @PreAuthorize("hasRole('admin')")
     public ResponseEntity<?> listar() { 
         List<Cliente> clientes = service.listar();
         if (clientes.isEmpty()) {
@@ -31,7 +31,7 @@ public class ClienteController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('admin')")
+    @PreAuthorize("hasRole('admin')")
     public Cliente detalle(@PathVariable Integer id) { return service.buscar(id); }
 
     @PostMapping
@@ -49,7 +49,7 @@ public class ClienteController {
 
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('admin')")
+    @PreAuthorize("hasRole('admin')")
     public ResponseEntity<Void> eliminar(@PathVariable Integer id) {
         service.eliminar(id);
         return ResponseEntity.noContent().build();
