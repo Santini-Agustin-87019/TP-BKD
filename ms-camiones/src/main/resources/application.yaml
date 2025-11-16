@@ -42,3 +42,12 @@ spring:
         format_sql: true # Formatea el SQL en la consola
         jdbc:
           time_zone: UTC # Fuerza a Hibernate a usar UTC
+
+  # 5. Configuración de OAuth2 Resource Server
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          # Esta es la dirección de la "oficina de seguridad" (el Realm)
+          # Le dice a Spring: "Ve aquí para verificar la firma de cualquier token"
+          issuer-uri: http://localhost:8080/realms/tpi-backend
