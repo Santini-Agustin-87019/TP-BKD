@@ -1,0 +1,33 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: ms-clientes
+
+  datasource:
+    # Desde ms-clientes (en Docker) la BD es "postgres-clientes:5432"
+    url: jdbc:postgresql://postgres-clientes:5432/clientes_db
+    username: postgres
+    password: postgres
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    open-in-view: false
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          # Dentro de Docker, Keycloak es "keycloak:8080"
+          # Usamos SOLO jwk-set-uri para no pelear con el iss
+          jwk-set-uri: http://keycloak:8080/realms/tpi-backend/protocol/openid-connect/certs
+          # NO pongas issuer-uri acá
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html

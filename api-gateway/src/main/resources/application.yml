@@ -1,0 +1,15 @@
+server:
+  port: 8090   # Puerto que usará el API Gateway
+
+spring:
+  application:
+    name: api-gateway
+
+  cloud:
+    gateway:
+      routes:
+        # ==== CLIENTES ====
+        - id: ms-clientes
+          uri: http://ms-clientes:8082  #nombre del servicio en docker compose
+          predicates:
+            - Path=/api/v1/clientes/**
