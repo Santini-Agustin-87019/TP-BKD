@@ -10,6 +10,6 @@ spring:
       routes:
         # ==== CLIENTES ====
         - id: ms-clientes
-          uri: http://ms-clientes:8082
+          uri: http://ms-clientes:8082  #nombre del servicio en docker compose
           predicates:
             - Path=/api/v1/clientes/**
