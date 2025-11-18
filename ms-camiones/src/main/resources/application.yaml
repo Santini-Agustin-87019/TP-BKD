@@ -1,53 +1,22 @@
-# 1. Configuración del Puerto del Servidor
 server:
-  port: 8081
+  port: 8081 # El puerto en el que corre la app DENTRO del contenedor
 
-# 2. Nombre de la Aplicación
 spring:
   application:
     name: ms-camiones
 
-  # 3. Configuración de la Base de Datos (DataSource)
-  datasource:
-    # URL de conexión de PostgreSQL
-    # Voy a asumir que el nombre de tu BD será 'ms_camiones_db'
-    # Se agrega serverTimezone=UTC para evitar el error de timezone
-    url: jdbc:postgresql://localhost:5432/ms_camiones_db?serverTimezone=UTC
+  # ¡BORRAMOS TODA LA SECCIÓN 'datasource'!
+  # Docker-compose se la dará ahora.
 
-    # Usuario de tu servidor PostgreSQL (generalmente 'postgres')
-    username: postgres
-
-    # ¡¡IMPORTANTE!! Reemplaza esto con tu contraseña real
-    password: admin
-
-    # El driver específico de PostgreSQL
-    driver-class-name: org.postgresql.Driver
-
-  # 4. Configuración de JPA (Hibernate)
   jpa:
-    # Le decimos a Hibernate que "traduzca" su SQL
-    # al dialecto específico de PostgreSQL.
     database-platform: org.hibernate.dialect.PostgreSQLDialect
 
-    # Mantenemos 'create-drop' por ahora.
-    # Esto creará las tablas en tu BD PostgreSQL al iniciar
-    # y las borrará al detenerse. Perfecto para desarrollo.
-    hibernate:
-      ddl-auto: create-drop
+    # ¡BORRAMOS 'ddl-auto'! Docker-compose se lo dará.
 
-    # Seguimos queriendo ver el SQL que se ejecuta
     show-sql: true
     properties:
       hibernate:
-        format_sql: true # Formatea el SQL en la consola
-        jdbc:
-          time_zone: UTC # Fuerza a Hibernate a usar UTC
+        format_sql: true
 
-  # 5. Configuración de OAuth2 Resource Server
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          # Esta es la dirección de la "oficina de seguridad" (el Realm)
-          # Le dice a Spring: "Ve aquí para verificar la firma de cualquier token"
-          issuer-uri: http://localhost:8080/realms/tpi-backend
+  # ¡BORRAMOS TODA LA SECCIÓN 'security.oauth2'!
+  # Docker-compose se la dará.

@@ -22,7 +22,35 @@ services:
     ports:
       - "8082:8082"
 
-    
+  postgres-camiones:
+    image: postgres:15
+    container_name: postgres-camiones
+    environment:
+      POSTGRES_DB: camiones_db # Tu propia base de datos
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5434:5432" # Expuesto en el 5434 para que no choque con clientes
+    volumes:
+      - camiones_data:/var/lib/postgresql/data
+
+  ms-camiones:
+    build: ./ms-camiones # Docker buscará tu Dockerfile aquí
+    container_name: ms-camiones
+    depends_on:
+      - postgres-camiones # Depende de TU base de datos
+      - keycloak # Depende de Keycloak para arrancar
+    environment:
+      # Conexión a TU base de datos (¡nota el nombre del servicio!)
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-camiones:5432/camiones_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update # Usamos 'update' como tu equipo
+      # Variable de entorno de Keycloak
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://keycloak:8080/realms/tpi-backend
+    ports:
+      - "8081:8081" # Expones tu puerto 8081
+
   keycloak:
     image: quay.io/keycloak/keycloak:24.0.3
     container_name: keycloak
@@ -34,7 +62,7 @@ services:
       KEYCLOAK_ADMIN_PASSWORD: admin123
     volumes:
       - keycloak_data:/opt/keycloak/data
-  
+
   api-gateway:
     build: ./api-gateway
     container_name: api-gateway
@@ -47,5 +75,4 @@ services:
 volumes:
   clientes_data:
   keycloak_data:
-
-
+  camiones_data:
