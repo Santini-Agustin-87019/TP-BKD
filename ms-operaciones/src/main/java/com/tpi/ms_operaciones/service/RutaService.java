@@ -29,7 +29,7 @@ public class RutaService {
                 .orElseThrow(() -> new RuntimeException("Solicitud no encontrada con ID: " + request.getSolicitudId()));
 
         // 2. Creamos la nueva Ruta
-        Ruta nuevaRuta = new Ruta(solicitud);
+        Ruta nuevaRuta = new Ruta(solicitud.getId());
 
         // 3. Calculamos totales (distancia y costo)
         double distanciaTotal = 0;
@@ -39,31 +39,25 @@ public class RutaService {
         
         // (A futuro, aquí multiplicamos la distancia por el costo de ms-recursos)
         nuevaRuta.setDistanciaTotalKm(distanciaTotal);
-        nuevaRuta.setCostoTotalEstimado(distanciaTotal * 150.0); // Costo hardcodeado por ahora
         
-        // 4. Guardamos la ruta (para que tenga un ID)
-        Ruta rutaGuardada = rutaRepository.save(nuevaRuta);
-
-        // 5. Creamos y asociamos los Tramos
+        // 4. Creamos y asociamos los Tramos usando el método helper
         for (TramoDTO tramoDTO : request.getTramos()) {
             Tramo nuevoTramo = new Tramo(
-                    rutaGuardada,
+                    nuevaRuta,
                     tramoDTO.getOrigenId(),
                     tramoDTO.getDestinoId(),
                     tramoDTO.getTipoDestino(),
                     tramoDTO.getDistKm()
             );
-            // Agregamos el tramo a la lista de la ruta
-            rutaGuardada.getTramos().add(nuevoTramo); 
-            // OJO: No necesitamos guardar el tramo por separado
-            // gracias al CascadeType.ALL en la entidad Ruta
+            // Usamos el método helper de la entidad Ruta
+            nuevaRuta.agregarTramo(nuevoTramo);
         }
         
-        // 6. Actualizamos el estado de la solicitud
+        // 5. Actualizamos el estado de la solicitud
         solicitud.setEstado("APROBADA");
         solicitudRepository.save(solicitud);
 
-        // 7. Guardamos la ruta de nuevo (ahora con los tramos)
-        return rutaRepository.save(rutaGuardada);
+        // 6. Guardamos la ruta (ahora con los tramos gracias a CascadeType.ALL)
+        return rutaRepository.save(nuevaRuta);
     }
 }

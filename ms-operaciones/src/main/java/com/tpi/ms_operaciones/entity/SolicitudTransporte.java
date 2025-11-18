@@ -1,4 +1,4 @@
-package com.tpi.ms_operaciones_entity;
+package com.tpi.ms_operaciones.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
