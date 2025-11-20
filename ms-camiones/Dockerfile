@@ -1,32 +1,23 @@
-# -------------------------------------------------------------------
-# FASE 1: La Base - ¿Qué necesitamos para correr la app?
-# -------------------------------------------------------------------
-# Empezamos desde una imagen base que ya tiene Java 17 instalado.
-# Usamos "jre" (Java Runtime Environment) porque solo necesitamos *correr* la app, no compilarla.
-# "alpine" es una versión de Linux súper ligera.
+# --- FASE 1: La Base ---
+# Usamos una imagen oficial de Java 17 (versión JRE - solo para correr)
+# Es Alpine, una versión de Linux súper ligera.
 FROM eclipse-temurin:17-jre-alpine
 
-# -------------------------------------------------------------------
-# FASE 2: Preparación - Copiar nuestra app a la "caja"
-# -------------------------------------------------------------------
-# Establecemos un directorio de trabajo dentro de la "caja"
+# --- FASE 2: Preparación ---
+# Establecemos un directorio de trabajo dentro del contenedor.
 WORKDIR /app
 
-# Copiamos el .jar (que creamos con 'mvn package') desde nuestra PC (target/...)
-# al directorio de trabajo (/app) dentro de la "caja".
-# El wildcard (*) evita problemas si la versión cambia (ej. 0.0.2).
+# Copiamos el .jar (que se crea en la carpeta 'target' cuando ejecutas 'mvn package')
+# al directorio /app dentro del contenedor y lo renombramos a 'app.jar'.
+# El * se usa para que coincida con cualquier versión (ej. 0.0.1-SNAPSHOT).
 COPY target/ms-camiones-*.jar app.jar
 
-# -------------------------------------------------------------------
-# FASE 3: Configuración - ¿Qué puertos usamos?
-# -------------------------------------------------------------------
-# Le informamos a Docker que nuestra app (Spring Boot) usará el puerto 8081.
-# Esto es como "abrir el agujero" en la caja para ese puerto.
+# --- FASE 3: Exponer el Puerto ---
+# Le informamos a Docker que nuestra app Spring Boot (en application.yml)
+# usa el puerto 8081. Esto NO lo publica, solo lo expone internamente.
 EXPOSE 8081
 
-# -------------------------------------------------------------------
-# FASE 4: El Comando - ¿Cómo se inicia la app?
-# -------------------------------------------------------------------
-# Esta es la instrucción final que se ejecutará cuando alguien inicie la "caja".
-# Es lo mismo que escribir "java -jar app.jar" en la terminal.
+# --- FASE 4: El Comando de Arranque ---
+# Esta es la instrucción que se ejecuta cuando el contenedor inicia.
+# Es lo mismo que escribir "java -jar app.jar" en tu terminal.
 ENTRYPOINT ["java", "-jar", "app.jar"]

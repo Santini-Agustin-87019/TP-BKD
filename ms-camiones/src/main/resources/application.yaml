@@ -5,14 +5,13 @@ spring:
   application:
     name: ms-camiones
 
-  # ¡BORRAMOS TODA LA SECCIÓN 'datasource'!
-  # Docker-compose se la dará ahora.
+  # ¡BORRAMOS TODA LA SECCIÓN 'datasource'! 
 
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
-
+    
     # ¡BORRAMOS 'ddl-auto'! Docker-compose se lo dará.
-
+    
     show-sql: true
     properties:
       hibernate:
