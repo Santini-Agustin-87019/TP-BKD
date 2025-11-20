@@ -1,6 +1,7 @@
 version: "3.8"
 
 services:
+  # === (ms-clientes) ===
   postgres-clientes:
     image: postgres:15
     container_name: postgres-clientes
@@ -22,11 +23,12 @@ services:
     ports:
       - "8082:8082"
 
+  # === (ms-camiones) ===
   postgres-camiones:
     image: postgres:15
     container_name: postgres-camiones
     environment:
-      POSTGRES_DB: camiones_db # Tu propia base de datos
+      POSTGRES_DB: camiones_db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
@@ -45,12 +47,62 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-camiones:5432/camiones_db
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
-      SPRING_JPA_HIBERNATE_DDL_AUTO: update # Usamos 'update' como tu equipo
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
       # Variable de entorno de Keycloak
       SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://keycloak:8080/realms/tpi-backend
     ports:
       - "8081:8081" # Expones tu puerto 8081
 
+  # === (ms-operaciones) ===
+  postgres-operaciones:
+    image: postgres:15
+    container_name: postgres-operaciones
+    environment:
+      POSTGRES_DB: operaciones_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5435:5432" # así no choca con 5433 y 5434
+    volumes:
+      - operaciones_data:/var/lib/postgresql/data
+
+  ms-operaciones:
+    build: ./ms-operaciones
+    container_name: ms-operaciones
+    depends_on:
+      - postgres-operaciones
+    ports:
+      - "8083:8083"
+
+  # === (ms-recursos) ===
+  postgres-recursos:
+    image: postgres:15
+    container_name: postgres-recursos
+    environment:
+      POSTGRES_DB: recursos_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5436:5432"
+    volumes:
+      - recursos_data:/var/lib/postgresql/data
+
+  ms-recursos:
+    build: ./ms-recursos
+    container_name: ms-recursos
+    depends_on:
+      - postgres-recursos
+      - keycloak
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-recursos:5432/recursos_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://keycloak:8080/realms/tpi-backend
+    ports:
+      - "8080:8080"
+
+  # === Keycloak ===
   keycloak:
     image: quay.io/keycloak/keycloak:24.0.3
     container_name: keycloak
@@ -68,7 +120,8 @@ services:
     container_name: api-gateway
     depends_on:
       - ms-clientes
-      # - ms-operaciones   # cuando lo tengas, lo descomentás
+      - ms-camiones
+      - ms-operaciones
     ports:
       - "8090:8090"
 
@@ -76,3 +129,5 @@ volumes:
   clientes_data:
   keycloak_data:
   camiones_data:
+  operaciones_data:
+  recursos_data:
