@@ -1,49 +1,48 @@
 package com.tpi.ms_operaciones.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.tpi.ms_operaciones.enums.EstadoTramo;
+import com.tpi.ms_operaciones.enums.TipoTramo;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "tramos")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Tramo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long idTramo;
 
-    // Con esto, cada Tramo sabe a qué Ruta pertenece
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ruta_id")
-    @JsonIgnore // Evita bucles infinitos al convertir a JSON
-    private Ruta ruta;
+    private String origen;   // podés usar dirección o "DEPOSITO X"
+    private String destino;
 
-    // Este ID viene de 'ms-camiones'
-    private Long camionId; 
-
-    // Este ID viene de 'ms-recursos'
-    private Long depositoOrigenId;
-    
-    // Este ID puede ser de 'ms-recursos' (otro depósito) o 'ms-clientes'
-    private Long destinoId;
-    private String tipoDestino; // "DEPOSITO" o "CLIENTE"
-
+    // Se agrega para calcular costos y tiempos
     private Double distanciaKm;
-    private String estado; // PENDIENTE, ASIGNADO, EN_CURSO, COMPLETADO
-    
-    private LocalDateTime fechaHoraInicio; // Cuándo marcó inicio
-    private LocalDateTime fechaHoraFin; // Cuándo marcó fin
 
-    public Tramo(Ruta ruta, Long depositoOrigenId, Long destinoId, String tipoDestino, Double distanciaKm) {
-        this.ruta = ruta;
-        this.depositoOrigenId = depositoOrigenId;
-        this.destinoId = destinoId;
-        this.tipoDestino = tipoDestino;
-        this.distanciaKm = distanciaKm;
-        this.estado = "PENDIENTE";
-    }
+    private BigDecimal costoAproximado;
+    private BigDecimal costoReal;
+
+    private LocalDateTime fechaHoraInicio;
+    private LocalDateTime fechaHoraFin;
+
+    // IDs de otros microservicios
+    private Long camionId;      // MS Camiones
+    
+
+    @Enumerated(EnumType.STRING)
+    private EstadoTramo estado;
+
+    @Enumerated(EnumType.STRING)
+    private TipoTramo tipo;
+
+    @ManyToOne
+    @JoinColumn(name = "ruta_id")
+    private Ruta ruta;
 }

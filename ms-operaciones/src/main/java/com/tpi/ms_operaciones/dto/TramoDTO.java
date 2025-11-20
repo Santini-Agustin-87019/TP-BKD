@@ -1,12 +1,18 @@
 package com.tpi.ms_operaciones.dto;
 
+import com.tpi.ms_operaciones.enums.TipoTramo;
+import lombok.Builder;
 import lombok.Data;
 
-// Esto representa cada objeto dentro de la lista "tramos"
+import java.math.BigDecimal;
+
 @Data
-public class TramoDTO {
-    private Long origenId;
-    private Long destinoId;
-    private String tipoDestino; // "DEPOSITO" o "CLIENTE"
-    private Double distKm;
+@Builder
+public class TramoDto {
+    private Long id;
+    private String origen;
+    private String destino;
+    private Double distanciaKm;
+    private BigDecimal costoAproximado;
+    private TipoTramo tipo;
 }

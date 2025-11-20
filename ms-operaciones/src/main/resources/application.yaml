@@ -1,0 +1,25 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: ms-operaciones
+
+  datasource:
+    url: jdbc:postgresql://postgres-operaciones:5432/operaciones_db
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update  # para desarrollo
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+# Parámetros simples para cálculo aproximado de costo/tiempo
+operaciones:
+  tarifa-base-km: 10      # valor ficticio
+  velocidad-promedio-kmh: 60
